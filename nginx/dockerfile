@@ -1,14 +1,38 @@
+# FROM nginx:alpine
+
+# # Remove any existing configuration files
+# RUN rm /etc/nginx/conf.d/*
+
+# # Copy the configuration file
+# COPY ./nginx.conf /etc/nginx/conf.d/
+
+# # Expose the port
+# EXPOSE 80
+# EXPOSE 443
+
+# # Start the server
+# CMD ["nginx", "-g", "daemon off;"]
+
+
+# nginx/Dockerfile
 FROM nginx:alpine
+
+# Install Certbot, cron, and dependencies
+RUN apk update && \
+    apk add --no-cache certbot py3-cron nginx-utils bash
 
 # Remove any existing configuration files
 RUN rm /etc/nginx/conf.d/*
 
-# Copy the configuration file
+# Copy nginx configuration
 COPY ./nginx.conf /etc/nginx/conf.d/
 
-# Expose the port
+# Expose the ports
 EXPOSE 80
 EXPOSE 443
 
-# Start the server
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the renewal cron job configuration
+COPY ./crontab /etc/crontabs/root
+
+# Start cron and NGINX
+CMD crond && nginx -g "daemon off;"
