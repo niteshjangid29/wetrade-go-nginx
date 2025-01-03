@@ -1,0 +1,14 @@
+FROM nginx:alpine
+
+# Remove any existing configuration files
+RUN rm /etc/nginx/conf.d/*
+
+# Copy the configuration file
+COPY ./nginx.conf /etc/nginx/conf.d/
+
+# Expose the port
+EXPOSE 80
+EXPOSE 443
+
+# Start the server
+CMD ["nginx", "-g", "daemon off;"]

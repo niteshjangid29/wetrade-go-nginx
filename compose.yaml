@@ -1,0 +1,26 @@
+services:
+  goapp:
+    container_name: goapp
+    image: goapp:latest
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env
+    environment:
+      - MONGO_URI = ${MONGO_URI}
+      - DB_NAME = ${DB_NAME}
+      - JWT_SECRET = ${JWT_SECRET}
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    build:
+      context: ./nginx
+      dockerfile: dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - goapp
